@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tokenarea demo</title>
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #fafafa; color: #1f2328; }
+    main { max-width: 820px; margin: 80px auto; padding: 0 16px; }
+    h1 { text-align: center; font-weight: 500; font-size: 32px; }
+    .box { background: #fff; border: 1px solid #ddd; border-radius: 24px; padding: 20px 24px; box-shadow: 0 2px 10px rgb(0 0 0 / .04); }
+    .prompt { display: block; width: 100%; min-height: 96px; border: 0; outline: 0; resize: vertical; font: inherit; font-size: 18px; line-height: 1.5; color: #1f2328; background: transparent; }
+    .prompt::placeholder { color: #8c959f; }
+    .tok { color: #2563eb; }
+    .menu { width: 420px; max-height: 320px; overflow: auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 10px 30px rgb(0 0 0 / .1); padding: 6px; margin-top: 4px; z-index: 10; }
+    .row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 15px; }
+    [data-active] > .row { background: #f3f4f6; }
+    .icon { color: #6b7280; font-size: 12px; }
+    .name { font-weight: 500; }
+    .value { color: #6b7280; font-size: 13px; }
+    .badge { margin-left: auto; color: #6d28d9; background: #f5f3ff; border-radius: 6px; padding: 2px 8px; font-size: 13px; }
+    #log { margin-top: 16px; color: #6b7280; font-size: 14px; }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@19.3.1",
+        "react/jsx-runtime": "https://esm.sh/react@19.3.1/jsx-runtime",
+        "react-dom/client": "https://esm.sh/react-dom@19.3.1/client?external=react"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main>
+    <h1>What do you want to test today?</h1>
+    <div id="app"></div>
+  </main>
+  <script type="module">
+    import { createElement as h, useState } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import { SuggestInput } from '../dist/index.js';
+
+    const variables = [
+      { name: 'API_CONFIG', value: '[{"... 1]"', scope: 'Global' },
+      { name: 'BASE_URL', value: 'https://app.example.com', scope: 'Global' },
+      { name: 'baseurl_var', value: 'https://example.com', scope: 'Global' },
+      { name: 'basic_select_value', value: 'Option 1', scope: 'Global' },
+      { name: 'change_me', value: 'change_me', scope: 'Global' },
+      { name: 'check_here', value: 'bhjn', scope: 'Global' },
+      { name: 'checkout_this', value: 'Google', scope: 'Global' },
+      { name: 'login_email', value: 'qa@example.com', scope: 'Local' },
+    ];
+    const short = (s) => (s.length > 10 ? `${s.slice(0, 3)}...${s.slice(-3)}` : s);
+
+    function Row({ v }) {
+      return h('div', { className: 'row' },
+        h('span', { className: 'icon' }, '{x}'),
+        h('span', { className: 'name' }, v.name),
+        h('span', { className: 'value' }, `"${short(v.value)}"`),
+        h('span', { className: 'badge' }, v.scope));
+    }
+
+    function App() {
+      const [text, setText] = useState('Open {{BASE_URL}} and log in with ');
+      const [last, setLast] = useState('');
+      return h('div', null,
+        h(SuggestInput, {
+          className: 'box',
+          value: text,
+          onChange: setText,
+          items: variables,
+          getText: (v) => `{{${v.name}}}`,
+          filter: (v, q) => v.name.toLowerCase().includes(q.toLowerCase()),
+          onSelect: (v) => setLast(v.name),
+        },
+          h(SuggestInput.Input, { className: 'prompt', tokenClassName: 'tok', placeholder: 'Type {{ to insert a variable', 'aria-label': 'Test prompt' }),
+          h(SuggestInput.List, { className: 'menu' }, (v) => h(Row, { v }))),
+        h('p', { id: 'log' }, last ? `onSelect: ${last}` : 'Type {{ to see variables. Typing a known one by hand colors it too.'));
+    }
+
+    createRoot(document.getElementById('app')).render(h(App));
+  </script>
+</body>
+</html>

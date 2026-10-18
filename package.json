@@ -1,0 +1,43 @@
+{
+  "name": "tokenarea",
+  "version": "0.1.0",
+  "description": "Headless React textarea with trigger-based suggestions (like {{variables}}) and colored tokens. Unstyled, zero dependencies besides React.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiv7700/tokenarea.git"
+  },
+  "homepage": "https://github.com/shiv7700/tokenarea#readme",
+  "author": "Shivang Ramola",
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "jsdom": "^29.1.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.12"
+  }
+}
